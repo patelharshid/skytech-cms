@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Megaphone, Plus, Trash2, Edit2 } from 'lucide-react';
+import { Megaphone, Plus, Edit2 } from 'lucide-react';
 import { useOutletContext } from 'react-router-dom';
 import { apiService } from 'src/services/api-service';
 import { MarqueeItemDialog } from '../marquee-item-dialog';
@@ -8,7 +8,6 @@ export function MarqueeView({
   items: propItems,
   onAdd: propOnAdd,
   onUpdate: propOnUpdate,
-  onDelete: propOnDelete,
   loading: propLoading,
 }) {
   const outletContext = useOutletContext();
@@ -119,24 +118,6 @@ export function MarqueeView({
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this announcement?')) {
-      return;
-    }
-    if (propOnDelete) {
-      propOnDelete(id);
-    } else {
-      try {
-        await apiService.deleteMarquee(id);
-        setItems((prev) => prev.filter((m) => m.id !== id));
-        refreshBadge();
-        showToast('Announcement removed', 'success');
-      } catch {
-        showToast('Failed to delete announcement', 'error');
-      }
-    }
-  };
-
   const activeItems = items.filter((i) => i.isActive);
   const tickerText =
     activeItems.map((m) => m.title).join('   •   ') || 'No active announcements right now.';
@@ -179,7 +160,7 @@ export function MarqueeView({
                   <th style={{ width: '60px' }}>#ID</th>
                   <th>Announcement Text</th>
                   <th style={{ width: '120px', textAlign: 'center' }}>Active Status</th>
-                  <th style={{ width: '140px', textAlign: 'right' }}>Actions</th>
+                  <th style={{ width: '80px', textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -203,7 +184,7 @@ export function MarqueeView({
                       </label>
                     </td>
                     <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <button
                           type="button"
                           className="btn btn-secondary btn-sm btn-icon"
@@ -212,15 +193,6 @@ export function MarqueeView({
                           id={`btn-edit-marquee-${item.id}`}
                         >
                           <Edit2 size={14} />
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-danger btn-sm btn-icon"
-                          onClick={() => handleDelete(item.id)}
-                          title="Delete announcement"
-                          id={`btn-delete-marquee-${item.id}`}
-                        >
-                          <Trash2 size={14} />
                         </button>
                       </div>
                     </td>

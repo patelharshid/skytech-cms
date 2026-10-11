@@ -206,24 +206,6 @@ export const apiService = {
     return { data: { id, title, isActive }, source: 'local' };
   },
 
-  deleteMarquee: async (id) => {
-    try {
-      const result = await apiClient.request(`/api/topmarquee/${id}`, {
-        method: 'DELETE',
-      });
-      if (result && result.success) {
-        updateTopMarqueeCache((current) => current.filter((item) => item.id !== id), 'backend');
-        return { success: true, source: 'backend' };
-      }
-    } catch (err) {
-      console.warn(`[apiService] Backend delete marquee ${id} failed:`, err);
-    }
-
-    const { data: current } = await apiService.getTopMarquee();
-    const updated = current.filter((elem) => elem.id !== id);
-    saveTopMarqueeCache(updated, 'local');
-    return { success: true, source: 'local' };
-  },
 };
 
 export default apiService;
