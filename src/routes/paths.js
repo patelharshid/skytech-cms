@@ -18,7 +18,6 @@ export const paths = {
   auth: {
     signIn: `${ROOTS.AUTH}/sign-in`,
     signUp: `${ROOTS.AUTH}/sign-up`,
-    changePassword: `${ROOTS.AUTH}/change-password`,
     forgotPassword: `${ROOTS.AUTH}/forgot-password`,
   },
 
@@ -42,9 +41,6 @@ export const paths = {
       list: `${ROOTS.DASHBOARD}/student/list`,
       new: `${ROOTS.DASHBOARD}/student/new`,
       edit: (id) => `${ROOTS.DASHBOARD}/student/edit/${id}`,
-    },
-    profile: {
-      edit: (id) => `${ROOTS.DASHBOARD}/profile/edit/${id}`,
     },
     timetable: {
       root: `${ROOTS.DASHBOARD}/timetable`,

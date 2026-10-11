@@ -5,17 +5,17 @@ import { useTheme } from '@mui/material/styles';
 import { merge } from 'es-toolkit';
 import { useBoolean } from 'minimal-shared/hooks';
 import { Logo } from 'src/components/logo';
+import { Iconify } from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { useSelector } from 'react-redux';
 
-import { AccountDrawer } from '../components/account-drawer';
+import { SignOutButton } from '../components/sign-out-button';
 import { MenuButton } from '../components/menu-button';
 // import { NotificationsDrawer } from '../components/notifications-drawer';
 import { layoutClasses } from '../core/classes';
 import { HeaderSection } from '../core/header-section';
 import { LayoutSection } from '../core/layout-section';
 import { MainSection } from '../core/main-section';
-import { _account } from '../nav-config-account';
 import { navData as dashboardNavData } from '../nav-config-dashboard';
 
 import { VerticalDivider } from './content';
@@ -77,6 +77,7 @@ export function DashboardLayout({ sx, cssVars, children, slotProps, layoutQuery 
             currentRole={loggedInTeacher?.roleId}
             onClose={onClose}
             cssVars={navVars.section}
+            slots={{ bottomArea: <SignOutButton sx={{ mx: 2, mb: 2, width: 'calc(100% - 32px)' }} /> }}
           />
 
           {/** @slot Logo */}
@@ -96,8 +97,15 @@ export function DashboardLayout({ sx, cssVars, children, slotProps, layoutQuery 
         </>
       ),
       rightArea: (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 0.75 } }}>
-          {loggedInTeacher && <AccountDrawer data={_account(loggedInTeacher)} />}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1 }}>
+          {loggedInTeacher && (
+            <>
+              <Iconify icon="solar:user-circle-bold" width={24} sx={{ color: 'primary.main' }} />
+              <Box component="span" sx={{ typography: 'subtitle2', fontWeight: 700 }}>
+                {loggedInTeacher.teacherName || loggedInTeacher.name}
+              </Box>
+            </>
+          )}
         </Box>
       ),
     };
@@ -121,6 +129,7 @@ export function DashboardLayout({ sx, cssVars, children, slotProps, layoutQuery 
       currentRole={loggedInTeacher?.roleId}
       layoutQuery={layoutQuery}
       cssVars={navVars.section}
+      slots={{ bottomArea: <SignOutButton sx={{ mx: 2, mb: 2, width: 'calc(100% - 32px)' }} /> }}
       onToggleNav={() =>
         settings.setField(
           'navLayout',

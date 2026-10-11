@@ -12,7 +12,6 @@ const TeacherListPage = lazy(() => import('src/pages/teacher/list'));
 const TopMarqueePage = lazy(() => import('src/pages/top-marquee/list'));
 const TeacherCreatePage = lazy(() => import('src/pages/teacher/new'));
 const TeacherEditPage = lazy(() => import('src/pages/teacher/edit'));
-const ProfileEditPage = lazy(() => import('src/pages/teacher/profile'));
 
 const StudentListPage = lazy(() => import('src/pages/student/list'));
 const StudentCreatePage = lazy(() => import('src/pages/student/new'));
@@ -88,10 +87,6 @@ export const dashboardRoutes = [
           { path: 'new', element: <StudentCreatePage /> },
           { path: 'edit/:id', element: <StudentEditPage /> },
         ],
-      },
-      {
-        path: 'profile',
-        children: [{ path: 'edit/:id', element: <ProfileEditPage /> }],
       },
       {
         path: 'timetable',
