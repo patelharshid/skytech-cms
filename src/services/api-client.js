@@ -1,26 +1,33 @@
 import { CONFIG } from 'src/global-config';
 
 const TOKEN_KEY = 'skytech_cms_token';
+const pendingGetRequests = new Map();
 
 export const apiClient = {
   baseUrl: CONFIG.serverUrl,
 
   async checkHealth() {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
 
-      const response = await fetch(`${CONFIG.serverUrl}/api/topmarquee/getTopMarquee`, {
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-      return { online: response.ok, status: response.status };
+    try {
+      await this.request('/api/topmarquee/getTopMarquee', { signal: controller.signal });
+      return { online: true, status: 200 };
     } catch {
       return { online: false, status: 'Network Error' };
+    } finally {
+      clearTimeout(timeoutId);
     }
   },
 
   async request(endpoint, options = {}) {
+    const method = (options.method || 'GET').toUpperCase();
+    const requestKey = `${method}:${endpoint}`;
+
+    if (method === 'GET' && pendingGetRequests.has(requestKey)) {
+      return pendingGetRequests.get(requestKey);
+    }
+
     const token = localStorage.getItem(TOKEN_KEY);
     const headers = {
       'Content-Type': 'application/json',
@@ -28,17 +35,32 @@ export const apiClient = {
       ...(options.headers || {}),
     };
 
-    const response = await fetch(`${CONFIG.serverUrl}${endpoint}`, {
-      ...options,
-      headers,
-    });
+    const requestPromise = (async () => {
+      const response = await fetch(`${CONFIG.serverUrl}${endpoint}`, {
+        ...options,
+        headers,
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`API Error [${response.status}]: ${errorText || response.statusText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API Error [${response.status}]: ${errorText || response.statusText}`);
+      }
+
+      return response.json();
+    })();
+
+    if (method !== 'GET') {
+      return requestPromise;
     }
 
-    return await response.json();
+    pendingGetRequests.set(requestKey, requestPromise);
+    try {
+      return await requestPromise;
+    } finally {
+      if (pendingGetRequests.get(requestKey) === requestPromise) {
+        pendingGetRequests.delete(requestKey);
+      }
+    }
   },
 };
 

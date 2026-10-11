@@ -5,6 +5,28 @@ const TOKEN_KEY = 'skytech_cms_token';
 const REFRESH_TOKEN_KEY = 'skytech_cms_refresh_token';
 const USER_KEY = 'skytech_cms_user';
 const MARQUEE_KEY = 'skytech_cms_marquee';
+let topMarqueeRequest = null;
+let topMarqueeCache = null;
+
+const saveTopMarqueeCache = (data, source = 'local') => {
+  topMarqueeCache = { data, source };
+  localStorage.setItem(MARQUEE_KEY, JSON.stringify(data));
+  return topMarqueeCache;
+};
+
+const updateTopMarqueeCache = (update, source = 'local') => {
+  let current = topMarqueeCache?.data;
+  if (!Array.isArray(current)) {
+    try {
+      current = JSON.parse(localStorage.getItem(MARQUEE_KEY) || 'null');
+    } catch {
+      current = null;
+    }
+  }
+  if (!Array.isArray(current)) current = defaultMarqueeAnnouncements;
+
+  return saveTopMarqueeCache(update(current), topMarqueeCache?.source || source);
+};
 
 export const apiService = {
   baseUrl: apiClient.baseUrl,
@@ -77,28 +99,38 @@ export const apiService = {
   // ----------------------------------------------------
   // Top Marquee CRUD
   // ----------------------------------------------------
-  getTopMarquee: async () => {
-    try {
-      const result = await apiClient.request('/api/topmarquee/getTopMarquee');
-      if (result && Array.isArray(result.data)) {
-        localStorage.setItem(MARQUEE_KEY, JSON.stringify(result.data));
-        return { data: result.data, source: 'backend' };
-      }
-    } catch (err) {
-      console.warn('[apiService] Backend unreachable, loading cached marquee:', err);
+  getTopMarquee: () => {
+    if (topMarqueeCache) {
+      return Promise.resolve(topMarqueeCache);
     }
 
-    const cached = localStorage.getItem(MARQUEE_KEY);
-    if (cached) {
-      try {
-        return { data: JSON.parse(cached), source: 'local' };
-      } catch {
-        // continue
-      }
+    if (!topMarqueeRequest) {
+      topMarqueeRequest = (async () => {
+        try {
+          const result = await apiClient.request('/api/topmarquee/getTopMarquee');
+          if (result && Array.isArray(result.data)) {
+            return saveTopMarqueeCache(result.data, 'backend');
+          }
+        } catch (err) {
+          console.warn('[apiService] Backend unreachable, loading cached marquee:', err);
+        }
+
+        const cached = localStorage.getItem(MARQUEE_KEY);
+        if (cached) {
+          try {
+            return saveTopMarqueeCache(JSON.parse(cached), 'local');
+          } catch {
+            // continue
+          }
+        }
+
+        return saveTopMarqueeCache(defaultMarqueeAnnouncements, 'local');
+      })().finally(() => {
+        topMarqueeRequest = null;
+      });
     }
 
-    localStorage.setItem(MARQUEE_KEY, JSON.stringify(defaultMarqueeAnnouncements));
-    return { data: defaultMarqueeAnnouncements, source: 'local' };
+    return topMarqueeRequest;
   },
 
   getMarqueeById: async (id) => {
@@ -126,6 +158,7 @@ export const apiService = {
         body: JSON.stringify(payload),
       });
       if (result && result.data) {
+        updateTopMarqueeCache((current) => [result.data, ...current.filter((item) => item.id !== result.data.id)], 'backend');
         return { data: result.data, source: 'backend' };
       }
     } catch (err) {
@@ -140,7 +173,7 @@ export const apiService = {
       createdDateTime: new Date().toISOString(),
     };
     const updated = [newItem, ...current];
-    localStorage.setItem(MARQUEE_KEY, JSON.stringify(updated));
+    saveTopMarqueeCache(updated, 'local');
     return { data: newItem, source: 'local' };
   },
 
@@ -157,6 +190,10 @@ export const apiService = {
         body: JSON.stringify(payload),
       });
       if (result && result.data) {
+        updateTopMarqueeCache(
+          (current) => current.map((item) => (item.id === id ? { ...item, ...result.data } : item)),
+          'backend'
+        );
         return { data: result.data, source: 'backend' };
       }
     } catch (err) {
@@ -165,7 +202,7 @@ export const apiService = {
 
     const { data: current } = await apiService.getTopMarquee();
     const updated = current.map((elem) => (elem.id === id ? { ...elem, title, isActive } : elem));
-    localStorage.setItem(MARQUEE_KEY, JSON.stringify(updated));
+    saveTopMarqueeCache(updated, 'local');
     return { data: { id, title, isActive }, source: 'local' };
   },
 
@@ -175,6 +212,7 @@ export const apiService = {
         method: 'DELETE',
       });
       if (result && result.success) {
+        updateTopMarqueeCache((current) => current.filter((item) => item.id !== id), 'backend');
         return { success: true, source: 'backend' };
       }
     } catch (err) {
@@ -183,7 +221,7 @@ export const apiService = {
 
     const { data: current } = await apiService.getTopMarquee();
     const updated = current.filter((elem) => elem.id !== id);
-    localStorage.setItem(MARQUEE_KEY, JSON.stringify(updated));
+    saveTopMarqueeCache(updated, 'local');
     return { success: true, source: 'local' };
   },
 };

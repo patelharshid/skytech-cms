@@ -34,14 +34,13 @@ export function MarqueeView({
       const res = await apiService.getTopMarquee();
       const data = res && res.data ? res.data : [];
       setItems(data);
-      refreshBadge();
     } catch (err) {
       console.error('Failed to load marquee data:', err);
       showToast('Error loading announcements', 'error');
     } finally {
       setLoading(false);
     }
-  }, [propItems, refreshBadge, showToast]);
+  }, [propItems, showToast]);
 
   useEffect(() => {
     if (propItems) {

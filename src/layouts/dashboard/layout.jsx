@@ -44,21 +44,18 @@ export function DashboardLayout({ children }) {
     try {
       const res = await apiService.getTopMarquee();
       const items = res && res.data ? res.data : [];
+      setBackendOnline(res?.source === 'backend');
       const activeCount = items.filter((m) => m.isActive).length;
       setMarqueeCount(activeCount);
     } catch {
-      // ignore
+      setBackendOnline(false);
     }
   }, []);
 
   useEffect(() => {
-    checkStatus();
     loadMarqueeBadge();
     setCurrentUser(apiService.getCurrentUser());
-
-    const interval = setInterval(checkStatus, 30000);
-    return () => clearInterval(interval);
-  }, [checkStatus, loadMarqueeBadge]);
+  }, [loadMarqueeBadge]);
 
   const handleLogout = () => {
     apiService.logout();
