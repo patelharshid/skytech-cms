@@ -75,26 +75,7 @@ export function Header({
           >
             {adminName}
           </span>
-          {onLogout && (
-            <button
-              type="button"
-              onClick={onLogout}
-              id="header-logout-btn"
-              title="Sign Out"
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--accent-rose)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                padding: '2px 4px',
-                marginLeft: '4px',
-              }}
-            >
-              <LogOut size={13} />
-            </button>
-          )}
+
         </div>
       </div>
     </header>
