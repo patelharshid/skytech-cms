@@ -14,21 +14,14 @@ import { apiService } from 'src/services/api-service';
 import { paths } from 'src/routes/paths';
 
 export function LoginView({ onLoginSuccess }) {
-  const [username, setUsername] = useState('admin@skytech.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const location = useLocation();
   const navigate = useNavigate();
-
-  const handleAutofill = () => {
-    setUsername('admin@skytech.com');
-    setPassword('admin123');
-    setErrorMessage('');
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,7 +29,7 @@ export function LoginView({ onLoginSuccess }) {
     setLoading(true);
 
     try {
-      const response = await apiService.login({ username, password });
+      const response = await apiService.login({ email, password });
       if (response && response.success) {
         if (onLoginSuccess) {
           onLoginSuccess(response.user);
@@ -83,18 +76,19 @@ export function LoginView({ onLoginSuccess }) {
           {/* Login Form */}
           <form className="login-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="form-label" htmlFor="username">
+              <label className="form-label" htmlFor="email">
                 Admin Email
               </label>
               <div className="input-with-icon">
                 <Mail size={18} className="input-icon-left" />
                 <input
-                  type="text"
-                  id="username"
+                  type="email"
+                  id="email"
                   className="form-control"
                   placeholder="admin@skytech.com"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="username"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
@@ -111,6 +105,7 @@ export function LoginView({ onLoginSuccess }) {
                   id="password"
                   className="form-control"
                   placeholder="••••••••"
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -124,17 +119,6 @@ export function LoginView({ onLoginSuccess }) {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-            </div>
-
-            <div className="login-extras">
-              <label className="login-checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                />
-                <span>Remember this device</span>
-              </label>
             </div>
 
             <button

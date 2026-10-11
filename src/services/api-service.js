@@ -2,6 +2,7 @@ import apiClient from './api-client';
 import { defaultMarqueeAnnouncements } from 'src/data/initial-data';
 
 const TOKEN_KEY = 'skytech_cms_token';
+const REFRESH_TOKEN_KEY = 'skytech_cms_refresh_token';
 const USER_KEY = 'skytech_cms_user';
 const MARQUEE_KEY = 'skytech_cms_marquee';
 
@@ -35,54 +36,42 @@ export const apiService = {
     }
   },
 
-  login: async ({ username, password }) => {
-    // 1. Attempt live backend auth
-    try {
-      const result = await apiClient.request('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ mobileno: username, password }),
-      });
+  login: async ({ email, password }) => {
+    const response = await apiClient.request('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email: email.trim(), password }),
+    });
 
-      if (result && result.token) {
-        localStorage.setItem(TOKEN_KEY, result.token);
-        const userObj = result.user || { name: 'Admin', username, role: 'Administrator' };
-        localStorage.setItem(USER_KEY, JSON.stringify(userObj));
-        return { success: true, user: userObj, token: result.token, source: 'backend' };
-      }
-    } catch {
-      // Backend auth endpoint offline or unconfigured, fallback to admin verification
+    // The backend wraps successful responses in { success, data }.
+    const result = response?.data || response;
+    const token = result?.session || result?.token;
+    if (!token) {
+      throw new Error(response?.message || 'The login response did not include a session.');
     }
 
-    // 2. Standard Admin verification
-    const normalizedUser = username ? username.trim().toLowerCase() : '';
-    const isValidUser =
-      normalizedUser === 'admin@skytech.com' ||
-      normalizedUser === 'admin' ||
-      normalizedUser === 'harshid';
-    const isValidPass =
-      password === 'admin123' || password === 'admin' || password === 'Harshid313@';
-
-    if (isValidUser && isValidPass) {
-      const token =
-        'skytech_jwt_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-      const userObj = {
-        id: 1,
-        name: 'SkyTech Administrator',
-        email: 'admin@skytech.com',
-        role: 'Super Admin',
-      };
-
-      localStorage.setItem(TOKEN_KEY, token);
-      localStorage.setItem(USER_KEY, JSON.stringify(userObj));
-      return { success: true, user: userObj, token, source: 'local' };
+    const userObj = result.user || {};
+    localStorage.setItem(TOKEN_KEY, token);
+    if (result.refresh) {
+      localStorage.setItem(REFRESH_TOKEN_KEY, result.refresh);
+    } else {
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
     }
-
-    throw new Error('Invalid email or password.');
+    localStorage.setItem(
+      USER_KEY,
+      JSON.stringify({
+        ...userObj,
+        id: userObj.userId ?? userObj.id,
+        name: [userObj.firstName, userObj.lastName].filter(Boolean).join(' ') || userObj.name || userObj.email,
+      })
+    );
+    return { success: true, user: userObj, token, source: 'backend' };
   },
 
   logout: () => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
+    [TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY].forEach((key) => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
   },
 
   // ----------------------------------------------------
