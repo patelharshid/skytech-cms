@@ -86,52 +86,6 @@ export function DashboardView({
           marginBottom: '28px',
         }}
       >
-        {/* Quick Actions Panel */}
-        <div className="cms-card">
-          <div className="cms-card-header">
-            <div>
-              <h2 className="cms-card-title">Top Marquee Management</h2>
-              <p className="cms-card-subtitle">Manage public rolling ticker</p>
-            </div>
-            <PlusCircle size={20} color="var(--accent-cyan)" />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <button
-              id="dash-quick-marquee"
-              className="btn btn-secondary"
-              style={{ justifyContent: 'space-between', padding: '16px 18px' }}
-              onClick={() => router.push(paths.dashboard.marquee)}
-              type="button"
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div
-                  style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '8px',
-                    background: 'rgba(245,158,11,0.15)',
-                    color: 'var(--accent-amber)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Megaphone size={18} />
-                </div>
-                <div style={{ textAlign: 'left' }}>
-                  <div style={{ fontWeight: '600', fontSize: '0.92rem' }}>
-                    Open Top Marquee Bar Manager
-                  </div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    Add, edit, toggle visibility, and delete announcements
-                  </div>
-                </div>
-              </div>
-              <ArrowRight size={18} />
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
