@@ -9,11 +9,9 @@ import { paths } from 'src/routes/paths';
 const PAGE_META = {
   [paths.dashboard.analytics]: {
     title: 'Platform Analytics',
-    subtitle: 'SkyTech system metrics and content overview',
   },
   [paths.dashboard.marquee]: {
     title: 'Top Marquee Bar',
-    subtitle: 'Header rolling announcement ticker management',
   },
 };
 
@@ -70,7 +68,6 @@ export function DashboardLayout({ children }) {
 
   const currentMeta = PAGE_META[location.pathname] || {
     title: 'Admin Command Center',
-    subtitle: 'SkyTech ecosystem management',
   };
 
   return (
@@ -83,7 +80,6 @@ export function DashboardLayout({ children }) {
       <main className="cms-main">
         <Header
           title={currentMeta.title}
-          subtitle={currentMeta.subtitle}
           backendStatus={backendOnline}
           checkingStatus={checkingStatus}
           onRefreshStatus={checkStatus}
