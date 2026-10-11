@@ -14,6 +14,7 @@ const LoginSection = () => {
   return (
     <GuestGuard>
       <AuthSplitLayout
+        centered
         slotProps={{
           section: {
             title: '',

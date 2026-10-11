@@ -14,7 +14,7 @@ import { AuthSplitSection } from './section';
 
 // ----------------------------------------------------------------------
 
-export function AuthSplitLayout({ sx, cssVars, children, slotProps, layoutQuery = 'md' }) {
+export function AuthSplitLayout({ sx, cssVars, children, slotProps, layoutQuery = 'md', centered = false }) {
   const renderHeader = () => {
     const headerSlotProps = {
       container: { maxWidth: false },
@@ -89,7 +89,7 @@ export function AuthSplitLayout({ sx, cssVars, children, slotProps, layoutQuery 
       /** **************************************
        * @Header
        *************************************** */
-      headerSection={renderHeader()}
+      headerSection={centered ? null : renderHeader()}
       /** **************************************
        * @Footer
        *************************************** */
@@ -100,7 +100,22 @@ export function AuthSplitLayout({ sx, cssVars, children, slotProps, layoutQuery 
       cssVars={{ '--layout-auth-content-width': '420px', ...cssVars }}
       sx={sx}
     >
-      {renderMain()}
+      {centered ? (
+        <MainSection
+          sx={{
+            minHeight: '100vh',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: { xs: 2, sm: 3 },
+            background:
+              'radial-gradient(circle at 50% 15%, rgba(245, 158, 11, 0.14) 0%, rgba(15, 23, 42, 0.95) 45%, #080c14 100%)',
+          }}
+        >
+          <AuthSplitContent layoutQuery={layoutQuery} sx={{ width: '100%', p: 0 }}>
+            {children}
+          </AuthSplitContent>
+        </MainSection>
+      ) : renderMain()}
     </LayoutSection>
   );
 }
