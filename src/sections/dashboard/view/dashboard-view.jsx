@@ -46,14 +46,6 @@ export function DashboardView({
 
   return (
     <div id="view-dashboard">
-      {/* Live Ticker Preview */}
-      <div className="preview-marquee-strip">
-        <span className="preview-tag">Live Ticker</span>
-        <div className="marquee-scroller">
-          <div className="marquee-scroller-inner">{tickerText}</div>
-        </div>
-      </div>
-
       {/* KPI Stats for Marquee & System */}
       <div className="stats-grid">
         <StatCard

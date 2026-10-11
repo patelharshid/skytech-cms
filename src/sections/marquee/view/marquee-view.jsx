@@ -144,14 +144,6 @@ export function MarqueeView({
 
   return (
     <div id="view-marquee">
-      {/* Live Ticker Preview */}
-      <div className="preview-marquee-strip">
-        <span className="preview-tag">Live Ticker Preview</span>
-        <div className="marquee-scroller">
-          <div className="marquee-scroller-inner">{tickerText}</div>
-        </div>
-      </div>
-
       <div className="cms-card">
         <div className="cms-card-header">
           <div>

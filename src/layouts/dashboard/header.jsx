@@ -26,36 +26,6 @@ export function Header({
       </div>
 
       <div className="header-right">
-        {/* Backend status indicator */}
-        <div
-          className={`status-badge ${backendStatus ? 'online' : 'warning'}`}
-          title={
-            backendStatus
-              ? 'Spring Boot API is connected & reachable'
-              : 'Spring Boot API offline, using local persistent fallback'
-          }
-        >
-          <span className="pulse-dot"></span>
-          <span>{backendStatus ? 'Backend API Active' : 'Offline Mode (Local Fallback)'}</span>
-          <button
-            type="button"
-            onClick={onRefreshStatus}
-            disabled={checkingStatus}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: 'inherit',
-              cursor: 'pointer',
-              padding: '2px',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-            title="Check connection to Spring Boot"
-          >
-            <RefreshCw size={12} className={checkingStatus ? 'spin' : ''} />
-          </button>
-        </div>
-
         {/* Live Website link */}
         <a
           href={CONFIG.frontendUrl}
