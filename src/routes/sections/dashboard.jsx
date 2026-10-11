@@ -5,31 +5,7 @@ import { LoadingScreen } from 'src/components/loading-screen';
 import { DashboardLayout } from 'src/layouts/dashboard';
 
 const IndexPage = lazy(() => import('src/pages'));
-
-const ClassListPage = lazy(() => import('src/pages/class/list'));
-
-const TeacherListPage = lazy(() => import('src/pages/teacher/list'));
 const TopMarqueePage = lazy(() => import('src/pages/top-marquee/list'));
-const TeacherCreatePage = lazy(() => import('src/pages/teacher/new'));
-const TeacherEditPage = lazy(() => import('src/pages/teacher/edit'));
-
-const StudentListPage = lazy(() => import('src/pages/student/list'));
-const StudentCreatePage = lazy(() => import('src/pages/student/new'));
-const StudentEditPage = lazy(() => import('src/pages/student/edit'));
-const TimetableListPage = lazy(() => import('src/pages/timetable/list'));
-const AttendanceListPage = lazy(() => import('src/pages/attendance/list'));
-const FeesListPage = lazy(() => import('src/pages/fees/list'));
-const ExamListPage = lazy(() => import('src/pages/exam/list'));
-const ExamCreatePage = lazy(() => import('src/pages/exam/new'));
-const ExamEditPage = lazy(() => import('src/pages/exam/edit'));
-const ExamMarksPage = lazy(() => import('src/pages/exam/marks'));
-const ExamReportPage = lazy(() => import('src/pages/exam/report'));
-const AnnouncementListPage = lazy(() => import('src/pages/announcement/list'));
-const HomeworkListPage = lazy(() => import('src/pages/homework/list'));
-const NoteListPage = lazy(() => import('src/pages/note/list'));
-const LeaveListPage = lazy(() => import('src/pages/leave/list'));
-const HolidayListPage = lazy(() => import('src/pages/holiday/list'));
-const AnalyticsPage = lazy(() => import('src/pages/analytics'));
 
 const dashboardLayout = () => (
   <DashboardLayout>
@@ -46,7 +22,7 @@ export const dashboardRoutes = [
     children: [
       {
         path: '/',
-        children: [{ index: true, element: <TeacherListPage /> }],
+        children: [{ index: true, element: <TopMarqueePage /> }],
       },
     ],
   },
@@ -56,80 +32,8 @@ export const dashboardRoutes = [
     children: [
       { index: true, element: <IndexPage /> },
       {
-        path: 'analytics',
-        children: [{ index: true, element: <AnalyticsPage /> }],
-      },
-      {
         path: 'top-marquee',
         children: [{ index: true, element: <TopMarqueePage /> }],
-      },
-      {
-        path: 'class',
-        children: [
-          { index: true, element: <ClassListPage /> },
-          { path: 'list', element: <ClassListPage /> },
-        ],
-      },
-      {
-        path: 'teacher',
-        children: [
-          { index: true, element: <TeacherListPage /> },
-          { path: 'list', element: <TeacherListPage /> },
-          { path: 'new', element: <TeacherCreatePage /> },
-          { path: 'edit/:id', element: <TeacherEditPage /> },
-        ],
-      },
-      {
-        path: 'student',
-        children: [
-          { index: true, element: <StudentListPage /> },
-          { path: 'list', element: <StudentListPage /> },
-          { path: 'new', element: <StudentCreatePage /> },
-          { path: 'edit/:id', element: <StudentEditPage /> },
-        ],
-      },
-      {
-        path: 'timetable',
-        children: [{ index: true, element: <TimetableListPage /> }],
-      },
-      {
-        path: 'attendance',
-        children: [{ index: true, element: <AttendanceListPage /> }],
-      },
-      {
-        path: 'fees',
-        children: [{ index: true, element: <FeesListPage /> }],
-      },
-      {
-        path: 'exam',
-        children: [
-          { index: true, element: <ExamListPage /> },
-          { path: 'list', element: <ExamListPage /> },
-          { path: 'new', element: <ExamCreatePage /> },
-          { path: 'edit/:id', element: <ExamEditPage /> },
-          { path: 'marks/:id', element: <ExamMarksPage /> },
-          { path: 'report/:id', element: <ExamReportPage /> },
-        ],
-      },
-      {
-        path: 'announcement',
-        children: [{ index: true, element: <AnnouncementListPage /> }],
-      },
-      {
-        path: 'homework',
-        children: [{ index: true, element: <HomeworkListPage /> }],
-      },
-      {
-        path: 'note',
-        children: [{ index: true, element: <NoteListPage /> }],
-      },
-      {
-        path: 'leave',
-        children: [{ index: true, element: <LeaveListPage /> }],
-      },
-      {
-        path: 'holiday',
-        children: [{ index: true, element: <HolidayListPage /> }],
       },
     ],
   },

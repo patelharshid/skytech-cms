@@ -31,7 +31,7 @@ const TABLE_HEAD = [
 ];
 
 export function TopMarqueeListView() {
-  const table = useTable({ defaultOrderBy: 'id', defaultOrder: 'desc' });
+  const table = useTable({ defaultOrderBy: 'id', defaultOrder: 'asc' });
   const [rows, setRows] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
