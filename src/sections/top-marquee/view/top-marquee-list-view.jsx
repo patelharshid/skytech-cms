@@ -3,13 +3,12 @@ import {
   Box,
   Button,
   Card,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
-  LinearProgress,
+  InputAdornment,
   Stack,
   Switch,
   Table,
@@ -19,44 +18,34 @@ import {
   TableRow,
   TextField,
   Tooltip,
+  Typography,
 } from '@mui/material';
-import { useSetState } from 'minimal-shared/hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { Iconify } from 'src/components/iconify';
 import { toast } from 'src/components/snackbar';
-import {
-  emptyRows,
-  getComparator,
-  TableEmptyRows,
-  TableHeadCustom,
-  TableNoData,
-  TablePaginationCustom,
-  useTable,
-} from 'src/components/table';
+import { getComparator, TableHeadCustom, useTable } from 'src/components/table';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { TableToolbar } from 'src/sections/table-toolbar';
 import ApiService from 'src/services/ApiService';
-import dateHelper from 'src/utils/dateHelper';
 
 const TABLE_HEAD = [
-  { id: 'title', label: 'Announcement', width: '55%' },
-  { id: 'createdDateTime', label: 'Created', width: '25%' },
-  { id: 'isActive', label: 'Status', width: '10%' },
-  { id: '', label: 'Actions', width: '10%', sortBy: false, sx: { textAlign: 'center' } },
+  { id: 'id', label: '#ID', width: '10%' },
+  { id: 'title', label: 'Announcement Text', width: '63%' },
+  { id: 'isActive', label: 'Active Status', width: '15%', sx: { textAlign: 'center' } },
+  { id: '', label: 'Actions', width: '12%', sortBy: false, sx: { textAlign: 'right' } },
 ];
 
 export function TopMarqueeListView() {
-  const table = useTable({ defaultOrderBy: 'createdDateTime', defaultOrder: 'desc' });
-  const filters = useSetState({ search: '' });
+  const table = useTable({ defaultOrderBy: 'id', defaultOrder: 'desc' });
   const [rows, setRows] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
   const [title, setTitle] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [isActive, setIsActive] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [updatingId, setUpdatingId] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -76,10 +65,16 @@ export function TopMarqueeListView() {
   }, [loadRows]);
 
   const filteredRows = useMemo(() => {
-    const search = filters.state.search.trim().toLowerCase();
-    const sorted = [...rows].sort(getComparator(table.order, table.orderBy));
-    return search ? sorted.filter((row) => row.title?.toLowerCase().includes(search)) : sorted;
-  }, [filters.state.search, rows, table.order, table.orderBy]);
+    const query = searchTerm.trim().toLowerCase();
+    return [...rows]
+      .sort(getComparator(table.order, table.orderBy))
+      .filter(
+        (row) =>
+          !query ||
+          String(row.id).includes(query) ||
+          row.title?.toLowerCase().includes(query)
+      );
+  }, [rows, searchTerm, table.order, table.orderBy]);
 
   const openDialog = (row = null) => {
     setEditingRow(row);
@@ -106,31 +101,53 @@ export function TopMarqueeListView() {
 
     if (result.data) {
       toast.success(editingRow ? 'Announcement updated.' : 'Announcement created.');
+      if (editingRow) {
+        setRows((previousRows) =>
+          previousRows.map((row) =>
+            row.id === editingRow.id ? { ...row, ...result.data, ...payload } : row
+          )
+        );
+      } else {
+        setRows((previousRows) => [result.data, ...previousRows]);
+      }
       setDialogOpen(false);
-      await loadRows();
     } else {
       toast.error(result.errors?.[0]?.msg || 'Could not save the announcement.');
     }
   };
 
-  const deleteRow = async () => {
+  const handleToggleActive = async (row, checked) => {
+    setUpdatingId(row.id);
+    const { data, errors } = await ApiService.updateTopMarqueeAsync(row.id, {
+      title: row.title,
+      isActive: checked,
+    });
+    setUpdatingId(null);
+    if (data) {
+      setRows((previousRows) =>
+        previousRows.map((item) =>
+          item.id === row.id ? { ...item, ...data, isActive: checked } : item
+        )
+      );
+      toast.success(checked ? 'Announcement is active.' : 'Announcement is inactive.');
+    } else {
+      toast.error(errors?.[0]?.msg || 'Could not update announcement status.');
+    }
+  };
+
+  const handleDelete = async () => {
     if (!deleteTarget) return;
     setIsDeleting(true);
     const { data, errors } = await ApiService.deleteTopMarqueeAsync(deleteTarget.id);
     setIsDeleting(false);
     if (data) {
-      toast.success('Announcement deleted.');
+      setRows((previousRows) => previousRows.filter((row) => row.id !== deleteTarget.id));
       setDeleteTarget(null);
-      await loadRows();
+      toast.success('Announcement deleted.');
     } else {
       toast.error(errors?.[0]?.msg || 'Could not delete the announcement.');
     }
   };
-
-  const pageRows = filteredRows.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage
-  );
 
   return (
     <DashboardContent
@@ -140,7 +157,6 @@ export function TopMarqueeListView() {
         background:
           'radial-gradient(circle at 50% 0%, rgba(15, 23, 42, 0.92) 0%, #080c14 68%)',
         '& .MuiTypography-root': { color: '#f8fafc' },
-        '& .MuiBreadcrumbs-li': { color: '#94a3b8' },
         '& .MuiCard-root': {
           overflow: 'hidden',
           color: '#f8fafc',
@@ -178,121 +194,116 @@ export function TopMarqueeListView() {
             background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
           },
         },
-        '& .MuiTablePagination-root, & .MuiTablePagination-selectIcon, & .MuiTablePagination-actions button': {
-          color: '#94a3b8',
-        },
-        '& .MuiTablePagination-actions button.Mui-disabled': { color: '#475569' },
       }}
     >
-      <CustomBreadcrumbs
-        heading="Top Marquee"
-        links={[{ name: 'Dashboard', href: '' }, { name: 'Top Marquee' }]}
-        action={
-          <Button
-            variant="contained"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-            onClick={() => openDialog()}
-          >
-            New Announcement
-          </Button>
-        }
-        sx={{ mb: { xs: 2, md: 2 } }}
-      />
-
       <Card>
-        <TableToolbar
-          filters={filters}
-          onFilterChange={(search) => {
-            filters.setState({ search });
-            table.onResetPage();
+        <Box
+          sx={{
+            px: 3,
+            py: 2.5,
+            display: 'flex',
+            alignItems: { xs: 'flex-start', sm: 'center' },
+            justifyContent: 'space-between',
+            gap: 2,
+            flexDirection: { xs: 'column', sm: 'row' },
           }}
-          placeholder="Search announcements"
-        />
-        <TableContainer sx={{ height: 'calc(100vh - 40vh)' }}>
-          <Box sx={{ position: 'relative' }}>
+        >
+          <Box>
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Top Marquee Announcements
+            </Typography>
+          </Box>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ width: { xs: 1, sm: 'auto' } }}>
+            <TextField
+              size="small"
+              type="search"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search announcements"
+              sx={{ minWidth: { sm: 250 } }}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Iconify icon="eva:search-fill" sx={{ color: '#94a3b8' }} />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            <Button
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+              onClick={() => openDialog()}
+            >
+              Add Announcement
+            </Button>
+          </Stack>
+        </Box>
+        {isLoading ? (
+          <Stack alignItems="center" sx={{ py: 5, color: '#64748b' }}>
+            Loading announcements...
+          </Stack>
+        ) : rows.length === 0 ? (
+          <Stack alignItems="center" spacing={1} sx={{ py: 6, px: 3, color: '#64748b' }}>
+            <Iconify icon="solar:megaphone-bold" width={36} sx={{ opacity: 0.45 }} />
+            <Typography variant="body2" color="text.secondary" align="center">
+              No marquee announcements found. Click “Add Announcement” to create one.
+            </Typography>
+          </Stack>
+        ) : (
+          <TableContainer>
             <Table stickyHeader aria-label="top marquee announcements">
               <TableHeadCustom
                 order={table.order}
                 orderBy={table.orderBy}
                 headCells={TABLE_HEAD}
-                rowCount={filteredRows.length}
+                rowCount={rows.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
               />
-              {isLoading ? (
-                <TableBody>
+              <TableBody>
+                {filteredRows.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={TABLE_HEAD.length}>
-                      <Stack alignItems="center" sx={{ py: 4 }}>
-                        <LinearProgress sx={{ width: '50%', maxWidth: 360 }} />
+                    <TableCell colSpan={TABLE_HEAD.length} align="center" sx={{ py: 5, color: '#64748b' }}>
+                      No announcements match your search.
+                    </TableCell>
+                  </TableRow>
+                ) : filteredRows.map((row) => (
+                  <TableRow key={row.id} hover>
+                    <TableCell sx={{ fontWeight: 600, color: '#64748b' }}>#{row.id}</TableCell>
+                    <TableCell sx={{ maxWidth: 0, whiteSpace: 'normal', color: '#f8fafc' }}>
+                      {row.title}
+                    </TableCell>
+                    <TableCell align="center">
+                      <Switch
+                        size="small"
+                        checked={Boolean(row.isActive)}
+                        disabled={updatingId === row.id}
+                        onChange={(event) => handleToggleActive(row, event.target.checked)}
+                        inputProps={{ 'aria-label': `Toggle announcement ${row.id}` }}
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
+                        <Tooltip title="Edit announcement" arrow>
+                          <IconButton color="primary" onClick={() => openDialog(row)}>
+                            <Iconify icon="solar:pen-bold" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete announcement" arrow>
+                          <IconButton color="error" onClick={() => setDeleteTarget(row)}>
+                            <Iconify icon="solar:trash-bin-trash-bold" />
+                          </IconButton>
+                        </Tooltip>
                       </Stack>
                     </TableCell>
                   </TableRow>
-                </TableBody>
-              ) : (
-                <TableBody>
-                  <TableNoData label="No announcements found" notFound={!filteredRows.length} />
-                  {pageRows.map((row) => (
-                    <TableRow key={row.id} hover>
-                      <TableCell sx={{ maxWidth: 0, whiteSpace: 'normal' }}>{row.title}</TableCell>
-                      <TableCell>
-                        {dateHelper.formatDateTime(row.createdDateTime) || '—'}
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          size="small"
-                          label={row.isActive ? 'Active' : 'Inactive'}
-                          color={row.isActive ? 'success' : 'default'}
-                          variant="soft"
-                          sx={
-                            row.isActive
-                              ? {
-                                  color: '#34d399',
-                                  borderColor: 'rgba(16, 185, 129, 0.3)',
-                                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                                }
-                              : {
-                                  color: '#94a3b8',
-                                  borderColor: 'rgba(255, 255, 255, 0.12)',
-                                  backgroundColor: 'rgba(148, 163, 184, 0.1)',
-                                }
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
-                          <Tooltip title="Edit" arrow>
-                            <IconButton color="primary" onClick={() => openDialog(row)}>
-                              <Iconify icon="solar:pen-bold" />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Delete" arrow>
-                            <IconButton color="error" onClick={() => setDeleteTarget(row)}>
-                              <Iconify icon="solar:trash-bin-trash-bold" />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  <TableEmptyRows
-                    height={56}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, filteredRows.length)}
-                  />
-                </TableBody>
-              )}
+                ))}
+              </TableBody>
             </Table>
-          </Box>
-        </TableContainer>
-        <TablePaginationCustom
-          page={table.page}
-          dense={table.dense}
-          count={filteredRows.length}
-          rowsPerPage={table.rowsPerPage}
-          onPageChange={table.onChangePage}
-          onChangeDense={table.onChangeDense}
-          onRowsPerPageChange={table.onChangeRowsPerPage}
-        />
+          </TableContainer>
+        )}
       </Card>
 
       <Dialog
@@ -371,11 +382,17 @@ export function TopMarqueeListView() {
           },
         }}
         action={
-          <LoadingButton variant="contained" color="error" loading={isDeleting} onClick={deleteRow}>
+          <LoadingButton
+            variant="contained"
+            color="error"
+            loading={isDeleting}
+            onClick={handleDelete}
+          >
             Delete
           </LoadingButton>
         }
       />
+
     </DashboardContent>
   );
 }
