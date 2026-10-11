@@ -1,0 +1,81 @@
+export const ROOTS = {
+  AUTH: '/auth',
+  DASHBOARD: '/dashboard',
+  USER: '/user',
+  PAYMENT: '/payment',
+};
+
+export const paths = {
+  comingSoon: '/coming-soon',
+  maintenance: '/maintenance',
+  page403: '/error/403',
+  page404: '/error/404',
+  page500: '/error/500',
+  components: '/components',
+  comingSoonLog: '/coming-soon-log',
+
+  // AUTH
+  auth: {
+    signIn: `${ROOTS.AUTH}/sign-in`,
+    signUp: `${ROOTS.AUTH}/sign-up`,
+    changePassword: `${ROOTS.AUTH}/change-password`,
+    forgotPassword: `${ROOTS.AUTH}/forgot-password`,
+  },
+
+  // DASHBOARD
+  dashboard: {
+    root: ROOTS.DASHBOARD,
+    analytics: `${ROOTS.DASHBOARD}/analytics`,
+    class: {
+      root: `${ROOTS.DASHBOARD}/class`,
+      list: `${ROOTS.DASHBOARD}/class/list`,
+    },
+    teacher: {
+      root: `${ROOTS.DASHBOARD}/teacher`,
+      list: `${ROOTS.DASHBOARD}/teacher/list`,
+      new: `${ROOTS.DASHBOARD}/teacher/new`,
+      edit: (id) => `${ROOTS.DASHBOARD}/teacher/edit/${id}`,
+    },
+    student: {
+      root: `${ROOTS.DASHBOARD}/student`,
+      list: `${ROOTS.DASHBOARD}/student/list`,
+      new: `${ROOTS.DASHBOARD}/student/new`,
+      edit: (id) => `${ROOTS.DASHBOARD}/student/edit/${id}`,
+    },
+    profile: {
+      edit: (id) => `${ROOTS.DASHBOARD}/profile/edit/${id}`,
+    },
+    timetable: {
+      root: `${ROOTS.DASHBOARD}/timetable`,
+    },
+    attendance: {
+      root: `${ROOTS.DASHBOARD}/attendance`,
+    },
+    fees: {
+      root: `${ROOTS.DASHBOARD}/fees`,
+    },
+    exam: {
+      root: `${ROOTS.DASHBOARD}/exam`,
+      list: `${ROOTS.DASHBOARD}/exam/list`,
+      new: `${ROOTS.DASHBOARD}/exam/new`,
+      edit: (id) => `${ROOTS.DASHBOARD}/exam/edit/${id}`,
+      marks: (id) => `${ROOTS.DASHBOARD}/exam/marks/${id}`,
+      report: (id) => `${ROOTS.DASHBOARD}/exam/report/${id}`,
+    },
+    announcement: {
+      root: `${ROOTS.DASHBOARD}/announcement`,
+    },
+    homework: {
+      root: `${ROOTS.DASHBOARD}/homework`,
+    },
+    note: {
+      root: `${ROOTS.DASHBOARD}/note`,
+    },
+    leave: {
+      root: `${ROOTS.DASHBOARD}/leave`,
+    },
+    holiday: {
+      root: `${ROOTS.DASHBOARD}/holiday`,
+    },
+  },
+};
