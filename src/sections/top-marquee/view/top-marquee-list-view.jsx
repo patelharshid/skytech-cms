@@ -1,12 +1,7 @@
-import { LoadingButton } from '@mui/lab';
 import {
   Box,
   Button,
   Card,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   IconButton,
   InputAdornment,
   Stack,
@@ -21,12 +16,12 @@ import {
   Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import { Iconify } from 'src/components/iconify';
 import { toast } from 'src/components/snackbar';
 import { getComparator, TableHeadCustom, useTable } from 'src/components/table';
 import { DashboardContent } from 'src/layouts/dashboard';
 import ApiService from 'src/services/ApiService';
+import { TopMarqueeFormDialog } from '../top-marquee-form-dialog';
 
 const TABLE_HEAD = [
   { id: 'id', label: '#ID', width: '10%' },
@@ -41,13 +36,8 @@ export function TopMarqueeListView() {
   const [isLoading, setIsLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
-  const [title, setTitle] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [isActive, setIsActive] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
   const [updatingId, setUpdatingId] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const loadRows = useCallback(async () => {
     setIsLoading(true);
@@ -78,74 +68,34 @@ export function TopMarqueeListView() {
 
   const openDialog = (row = null) => {
     setEditingRow(row);
-    setTitle(row?.title ?? '');
-    setIsActive(row?.isActive ?? true);
     setDialogOpen(true);
-  };
-
-  const closeDialog = () => {
-    if (!isSaving) setDialogOpen(false);
-  };
-
-  const saveRow = async (event) => {
-    event.preventDefault();
-    const trimmedTitle = title.trim();
-    if (!trimmedTitle) return;
-
-    setIsSaving(true);
-    const payload = { title: trimmedTitle, isActive };
-    const result = editingRow
-      ? await ApiService.updateTopMarqueeAsync(editingRow.id, payload)
-      : await ApiService.saveTopMarqueeAsync(payload);
-    setIsSaving(false);
-
-    if (result.data) {
-      toast.success(editingRow ? 'Announcement updated.' : 'Announcement created.');
-      if (editingRow) {
-        setRows((previousRows) =>
-          previousRows.map((row) =>
-            row.id === editingRow.id ? { ...row, ...result.data, ...payload } : row
-          )
-        );
-      } else {
-        setRows((previousRows) => [result.data, ...previousRows]);
-      }
-      setDialogOpen(false);
-    } else {
-      toast.error(result.errors?.[0]?.msg || 'Could not save the announcement.');
-    }
   };
 
   const handleToggleActive = async (row, checked) => {
     setUpdatingId(row.id);
-    const { data, errors } = await ApiService.updateTopMarqueeAsync(row.id, {
-      title: row.title,
-      isActive: checked,
-    });
-    setUpdatingId(null);
-    if (data) {
-      setRows((previousRows) =>
-        previousRows.map((item) =>
-          item.id === row.id ? { ...item, ...data, isActive: checked } : item
-        )
-      );
-      toast.success(checked ? 'Announcement is active.' : 'Announcement is inactive.');
-    } else {
-      toast.error(errors?.[0]?.msg || 'Could not update announcement status.');
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!deleteTarget) return;
-    setIsDeleting(true);
-    const { data, errors } = await ApiService.deleteTopMarqueeAsync(deleteTarget.id);
-    setIsDeleting(false);
-    if (data) {
-      setRows((previousRows) => previousRows.filter((row) => row.id !== deleteTarget.id));
-      setDeleteTarget(null);
-      toast.success('Announcement deleted.');
-    } else {
-      toast.error(errors?.[0]?.msg || 'Could not delete the announcement.');
+    try {
+      const payload = {
+        title: row.title,
+        isActive: checked,
+      };
+      const updateRequest = checked
+        ? ApiService.updateTopMarqueeAsync(row.id, payload)
+        : ApiService.deleteTopMarqueeAsync(row.id, { isActive: false });
+      const { data, errors } = await updateRequest;
+      if (data) {
+        setRows((previousRows) =>
+          previousRows.map((item) =>
+            item.id === row.id ? { ...item, ...data, isActive: checked } : item
+          )
+        );
+        toast.success(checked ? 'Announcement is active.' : 'Announcement is inactive.');
+      } else {
+        toast.error(errors?.[0]?.msg || 'Could not update announcement status.');
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Could not update announcement status.');
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -291,11 +241,6 @@ export function TopMarqueeListView() {
                             <Iconify icon="solar:pen-bold" />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip title="Delete announcement" arrow>
-                          <IconButton color="error" onClick={() => setDeleteTarget(row)}>
-                            <Iconify icon="solar:trash-bin-trash-bold" />
-                          </IconButton>
-                        </Tooltip>
                       </Stack>
                     </TableCell>
                   </TableRow>
@@ -306,91 +251,11 @@ export function TopMarqueeListView() {
         )}
       </Card>
 
-      <Dialog
+      <TopMarqueeFormDialog
         open={dialogOpen}
-        onClose={closeDialog}
-        fullWidth
-        maxWidth="sm"
-        sx={{
-          '& .MuiDialog-paper': {
-            color: '#f8fafc',
-            backgroundColor: '#0f172a',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
-            boxShadow: '0 24px 60px rgba(0, 0, 0, 0.65)',
-          },
-          '& .MuiOutlinedInput-root': {
-            color: '#f8fafc',
-            backgroundColor: '#141f36',
-            '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.12)' },
-            '&:hover fieldset': { borderColor: 'rgba(255, 255, 255, 0.24)' },
-            '&.Mui-focused fieldset': { borderColor: '#f59e0b' },
-          },
-          '& .MuiInputLabel-root': { color: '#94a3b8' },
-          '& .MuiButton-contained': {
-            color: '#090d16',
-            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-          },
-        }}
-      >
-        <Box component="form" onSubmit={saveRow}>
-          <DialogTitle>{editingRow ? 'Edit Announcement' : 'New Announcement'}</DialogTitle>
-          <DialogContent>
-            <Stack spacing={2.5} sx={{ pt: 1 }}>
-              <TextField
-                autoFocus
-                fullWidth
-                required
-                multiline
-                minRows={3}
-                label="Announcement text"
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-              />
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Box component="span" sx={{ typography: 'body2' }}>
-                  Active announcement
-                </Box>
-                <Switch checked={isActive} onChange={(event) => setIsActive(event.target.checked)} />
-              </Stack>
-            </Stack>
-          </DialogContent>
-          <DialogActions sx={{ px: 3, pb: 3 }}>
-            <Button onClick={closeDialog} color="inherit">
-              Cancel
-            </Button>
-            <LoadingButton type="submit" variant="contained" loading={isSaving}>
-              Save
-            </LoadingButton>
-          </DialogActions>
-        </Box>
-      </Dialog>
-
-      <ConfirmDialog
-        open={Boolean(deleteTarget)}
-        onClose={() => !isDeleting && setDeleteTarget(null)}
-        title="Delete Announcement"
-        content={<>Delete this top marquee announcement?</>}
-        sx={{
-          '& .MuiDialog-paper': {
-            color: '#f8fafc',
-            backgroundColor: '#0f172a',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
-          },
-          '& .MuiButton-outlined': {
-            color: '#cbd5e1',
-            borderColor: 'rgba(255, 255, 255, 0.18)',
-          },
-        }}
-        action={
-          <LoadingButton
-            variant="contained"
-            color="error"
-            loading={isDeleting}
-            onClick={handleDelete}
-          >
-            Delete
-          </LoadingButton>
-        }
+        onClose={() => setDialogOpen(false)}
+        row={editingRow}
+        onSuccess={loadRows}
       />
 
     </DashboardContent>

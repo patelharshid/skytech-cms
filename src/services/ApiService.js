@@ -189,10 +189,11 @@ async function updateTopMarqueeAsync(id, payload) {
   return await axios(config);
 }
 
-async function deleteTopMarqueeAsync(id) {
+async function deleteTopMarqueeAsync(id, payload) {
   const config = {
     method: 'delete',
     url: `/api/topmarquee/${id}`,
+    data: payload,
   };
   return await axios(config);
 }
