@@ -26,7 +26,6 @@ export function Header({
       </div>
 
       <div className="header-right">
-        {/* Live Website link */}
         <a
           href={CONFIG.frontendUrl}
           target="_blank"
@@ -38,7 +37,6 @@ export function Header({
           <span>Live Store</span>
         </a>
 
-        {/* Admin profile & Logout */}
         <div
           style={{
             display: 'flex',
