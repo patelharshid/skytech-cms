@@ -14,27 +14,6 @@ import {
 import { toast } from 'src/components/snackbar';
 import ApiService from 'src/services/ApiService';
 
-const dialogSx = {
-  '& .MuiDialog-paper': {
-    color: '#f8fafc',
-    backgroundColor: '#0f172a',
-    border: '1px solid rgba(255, 255, 255, 0.12)',
-    boxShadow: '0 24px 60px rgba(0, 0, 0, 0.65)',
-  },
-  '& .MuiOutlinedInput-root': {
-    color: '#f8fafc',
-    backgroundColor: '#141f36',
-    '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.12)' },
-    '&:hover fieldset': { borderColor: 'rgba(255, 255, 255, 0.24)' },
-    '&.Mui-focused fieldset': { borderColor: '#f59e0b' },
-  },
-  '& .MuiInputLabel-root': { color: '#94a3b8' },
-  '& .MuiButton-contained': {
-    color: '#090d16',
-    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-  },
-};
-
 export function TopMarqueeFormDialog({ open, onClose, row, onSuccess }) {
   const [title, setTitle] = useState('');
   const [isActive, setIsActive] = useState(true);
@@ -77,7 +56,28 @@ export function TopMarqueeFormDialog({ open, onClose, row, onSuccess }) {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" sx={dialogSx}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="sm"
+      sx={(theme) => ({
+        '& .MuiDialog-paper': {
+          color: theme.vars.palette.text.primary,
+          backgroundColor: theme.vars.palette.background.paper,
+          border: `1px solid ${theme.vars.palette.divider}`,
+          boxShadow: theme.shadows[24],
+        },
+        '& .MuiOutlinedInput-root': {
+          color: theme.vars.palette.text.primary,
+          backgroundColor: theme.vars.palette.background.neutral,
+          '& fieldset': { borderColor: theme.vars.palette.divider },
+          '&:hover fieldset': { borderColor: theme.vars.palette.text.secondary },
+          '&.Mui-focused fieldset': { borderColor: theme.vars.palette.primary.main },
+        },
+        '& .MuiInputLabel-root': { color: theme.vars.palette.text.secondary },
+      })}
+    >
       <Box component="form" onSubmit={handleSubmit}>
         <DialogTitle>{row ? 'Edit Announcement' : 'New Announcement'}</DialogTitle>
         <DialogContent>
