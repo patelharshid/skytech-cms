@@ -101,50 +101,48 @@ export function TopMarqueeListView() {
 
   return (
     <DashboardContent
-      sx={{
+      sx={(theme) => ({
         minHeight: '100%',
-        color: '#f8fafc',
-        background:
-          'radial-gradient(circle at 50% 0%, rgba(15, 23, 42, 0.92) 0%, #080c14 68%)',
-        '& .MuiTypography-root': { color: '#f8fafc' },
+        color: theme.vars.palette.text.primary,
+        backgroundColor: theme.vars.palette.background.default,
+        '& .MuiTypography-root': { color: theme.vars.palette.text.primary },
         '& .MuiCard-root': {
           overflow: 'hidden',
-          color: '#f8fafc',
-          backgroundColor: 'rgba(15, 23, 42, 0.88)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          boxShadow: '0 16px 36px rgba(0, 0, 0, 0.45)',
+          color: theme.vars.palette.text.primary,
+          backgroundColor: theme.vars.palette.background.paper,
+          border: `1px solid ${theme.vars.palette.divider}`,
+          boxShadow: theme.shadows[8],
           backdropFilter: 'blur(16px)',
         },
         '& .MuiTableCell-root': {
-          color: '#cbd5e1',
-          borderColor: 'rgba(255, 255, 255, 0.07)',
+          color: theme.vars.palette.text.secondary,
+          borderColor: theme.vars.palette.divider,
         },
         '& .MuiTableCell-head, & .MuiTableCell-stickyHeader': {
-          color: '#94a3b8',
-          backgroundColor: '#141f36',
+          color: theme.vars.palette.text.secondary,
+          backgroundColor: theme.vars.palette.background.neutral,
           backgroundImage: 'none',
         },
         '& .MuiTableRow-root:hover .MuiTableCell-body': {
-          backgroundColor: 'rgba(26, 39, 68, 0.8)',
+          backgroundColor: theme.vars.palette.action.hover,
         },
         '& .MuiOutlinedInput-root': {
-          color: '#f8fafc',
-          backgroundColor: 'rgba(20, 31, 54, 0.75)',
-          '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.12)' },
-          '&:hover fieldset': { borderColor: 'rgba(255, 255, 255, 0.24)' },
-          '&.Mui-focused fieldset': { borderColor: '#f59e0b' },
+          color: theme.vars.palette.text.primary,
+          backgroundColor: theme.vars.palette.background.neutral,
+          '& fieldset': { borderColor: theme.vars.palette.divider },
+          '&:hover fieldset': { borderColor: theme.vars.palette.text.secondary },
+          '&.Mui-focused fieldset': { borderColor: theme.vars.palette.primary.main },
         },
-        '& .MuiInputLabel-root': { color: '#94a3b8' },
+        '& .MuiInputLabel-root': { color: theme.vars.palette.text.secondary },
         '& .MuiButton-contained': {
-          color: '#090d16',
+          color: theme.vars.palette.primary.contrastText,
           fontWeight: 700,
-          background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-          boxShadow: '0 4px 16px rgba(245, 158, 11, 0.2)',
+          backgroundColor: theme.vars.palette.primary.main,
           '&:hover': {
-            background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
+            backgroundColor: theme.vars.palette.primary.dark,
           },
         },
-      }}
+      })}
     >
       <Card>
         <Box
@@ -175,7 +173,7 @@ export function TopMarqueeListView() {
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Iconify icon="eva:search-fill" sx={{ color: '#94a3b8' }} />
+                      <Iconify icon="eva:search-fill" sx={{ color: 'text.secondary' }} />
                     </InputAdornment>
                   ),
                 },
@@ -191,11 +189,11 @@ export function TopMarqueeListView() {
           </Stack>
         </Box>
         {isLoading ? (
-          <Stack alignItems="center" sx={{ py: 5, color: '#64748b' }}>
+          <Stack alignItems="center" sx={{ py: 5, color: 'text.secondary' }}>
             Loading announcements...
           </Stack>
         ) : rows.length === 0 ? (
-          <Stack alignItems="center" spacing={1} sx={{ py: 6, px: 3, color: '#64748b' }}>
+          <Stack alignItems="center" spacing={1} sx={{ py: 6, px: 3, color: 'text.secondary' }}>
             <Iconify icon="solar:megaphone-bold" width={36} sx={{ opacity: 0.45 }} />
             <Typography variant="body2" color="text.secondary" align="center">
               No marquee announcements found. Click “Add Announcement” to create one.
@@ -215,14 +213,14 @@ export function TopMarqueeListView() {
               <TableBody>
                 {filteredRows.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={TABLE_HEAD.length} align="center" sx={{ py: 5, color: '#64748b' }}>
+                    <TableCell colSpan={TABLE_HEAD.length} align="center" sx={{ py: 5, color: 'text.secondary' }}>
                       No announcements match your search.
                     </TableCell>
                   </TableRow>
                 ) : filteredRows.map((row) => (
                   <TableRow key={row.id} hover>
-                    <TableCell sx={{ fontWeight: 600, color: '#64748b' }}>#{row.id}</TableCell>
-                    <TableCell sx={{ maxWidth: 0, whiteSpace: 'normal', color: '#f8fafc' }}>
+                    <TableCell sx={{ fontWeight: 600, color: 'text.secondary' }}>#{row.id}</TableCell>
+                    <TableCell sx={{ maxWidth: 0, whiteSpace: 'normal', color: 'text.primary' }}>
                       {row.title}
                     </TableCell>
                     <TableCell align="center">
