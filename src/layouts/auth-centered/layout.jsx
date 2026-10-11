@@ -10,7 +10,6 @@ import { Logo } from 'src/components/logo';
 import { MainSection } from '../core/main-section';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
-import { SettingsButton } from '../components/settings-button';
 
 import { AuthCenteredContent } from './content';
 
@@ -44,8 +43,6 @@ export function AuthCenteredLayout({ sx, cssVars, children, slotProps, layoutQue
             Need help?
           </Link>
 
-          {/** @slot Settings button */}
-          <SettingsButton />
         </Box>
       ),
     };

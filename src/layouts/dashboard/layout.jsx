@@ -11,7 +11,6 @@ import { useSelector } from 'react-redux';
 import { AccountDrawer } from '../components/account-drawer';
 import { MenuButton } from '../components/menu-button';
 // import { NotificationsDrawer } from '../components/notifications-drawer';
-import { SettingsButton } from '../components/settings-button';
 import { layoutClasses } from '../core/classes';
 import { HeaderSection } from '../core/header-section';
 import { LayoutSection } from '../core/layout-section';
@@ -98,7 +97,6 @@ export function DashboardLayout({ sx, cssVars, children, slotProps, layoutQuery 
       ),
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 0.75 } }}>
-          <SettingsButton />
           {loggedInTeacher && <AccountDrawer data={_account(loggedInTeacher)} />}
         </Box>
       ),

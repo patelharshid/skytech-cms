@@ -36,9 +36,9 @@ export const text = {
     disabled: grey[500],
   }),
   dark: createPaletteChannel({
-    primary: '#FFFFFF',
-    secondary: grey[500],
-    disabled: grey[600],
+    primary: '#F8FAFC',
+    secondary: '#94A3B8',
+    disabled: '#64748B',
   }),
 };
 
@@ -50,9 +50,9 @@ export const background = {
     neutral: grey[200],
   }),
   dark: createPaletteChannel({
-    paper: grey[800],
-    default: grey[900],
-    neutral: '#28323D',
+    paper: '#0F172A',
+    default: '#080C14',
+    neutral: '#141F36',
   }),
 };
 
@@ -100,5 +100,6 @@ export const palette = {
     text: text.dark,
     background: background.dark,
     action: action.dark,
+    divider: 'rgba(255, 255, 255, 0.08)',
   },
 };

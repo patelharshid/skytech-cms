@@ -18,7 +18,7 @@ export function GuestGuard({ children }) {
   const checkPermissions = async () => {
     if (loggedInTeacher) {
       if (returnTo === '/' || returnTo === '/dashboard') {
-        router.replace(paths.dashboard.teacher.root);
+        router.replace(paths.dashboard.topMarquee);
       } else {
         router.replace(returnTo);
       }

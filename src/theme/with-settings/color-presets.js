@@ -28,12 +28,12 @@ export const primaryColorPresets = {
     contrastText: '#FFFFFF',
   },
   preset3: {
-    lighter: '#DDF4FA', // softer, cleaner tint
-    light: '#8FD8E6', // smoother transition to main
-    main: '#49C3D9', // keep as-is (your base)
-    dark: '#2A8FA3', // toned-down darker teal (less harsh than current)
-    darker: '#1B5F73', // deeper shade, still in same hue family
-    contrastText: '#FFFFFF',
+    lighter: '#FEF3C7',
+    light: '#FBBF24',
+    main: '#F59E0B',
+    dark: '#D97706',
+    darker: '#92400E',
+    contrastText: '#080C14',
   },
   preset4: {
     lighter: '#FEF4D4',

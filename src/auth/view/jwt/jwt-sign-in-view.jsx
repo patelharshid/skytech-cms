@@ -64,7 +64,7 @@ export function JwtSignInView() {
       };
 
       dispatch(login({ teacher: currentTokenUser, token }));
-      navigate('/dashboard/teacher');
+      navigate(paths.dashboard.topMarquee);
     } else if (errors?.length) {
       setErrorMessage(errors[0]?.msg || 'Login failed. Please check your credentials.');
     } else {
@@ -99,14 +99,6 @@ export function JwtSignInView() {
         }}
       />
 
-      <Link
-        component={RouterLink}
-        href={paths.auth.forgotPassword}
-        variant="body2"
-        sx={{ alignSelf: 'flex-end', color: '#f59e0b' }}
-      >
-        Forgot password?
-      </Link>
 
       <LoadingButton
         fullWidth

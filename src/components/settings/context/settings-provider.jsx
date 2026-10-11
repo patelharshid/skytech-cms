@@ -1,7 +1,6 @@
 import { isEqual } from 'es-toolkit';
 import { useLocalStorage } from 'minimal-shared/hooks';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useMemo, useState } from 'react';
 
 import { SETTINGS_STORAGE_KEY } from '../settings-config';
 
@@ -14,27 +13,19 @@ export function SettingsProvider({
   defaultSettings: baseSettings,
   storageKey = SETTINGS_STORAGE_KEY,
 }) {
-  const { tenantDetail } = useSelector((state) => state.AuthReducer);
   const mergedDefaultSettings = useMemo(() => {
-    const tenantPrimary = tenantDetail?.primaryColor;
-    const configPrimary = baseSettings?.primaryColor || 'preset3';
+    const configPrimary = baseSettings?.primaryColor || 'default';
 
     return {
       ...(baseSettings || {}),
-      primaryColor: tenantPrimary || configPrimary,
+      primaryColor: configPrimary,
     };
-  }, [baseSettings, tenantDetail?.primaryColor]);
+  }, [baseSettings]);
 
   const { state, setState, resetState, setField } = useLocalStorage(
     storageKey,
     mergedDefaultSettings
   );
-
-  useEffect(() => {
-    if (tenantDetail?.primaryColor) {
-      setField('primaryColor', tenantDetail.primaryColor);
-    }
-  }, [tenantDetail?.primaryColor]);
 
   const [openDrawer, setOpenDrawer] = useState(false);
 

@@ -16,7 +16,7 @@ export const CONFIG = {
   auth: {
     method: 'jwt',
     skip: false,
-    redirectPath: paths.dashboard.teacher.root,
+    redirectPath: paths.dashboard.topMarquee,
   },
   /**
    * Mapbox

@@ -7,7 +7,6 @@ import { Logo } from 'src/components/logo';
 import { MainSection } from '../core/main-section';
 import { LayoutSection } from '../core/layout-section';
 import { HeaderSection } from '../core/header-section';
-import { SettingsButton } from '../components/settings-button';
 
 import { SimpleCompactContent } from './content';
 
@@ -36,8 +35,6 @@ export function SimpleLayout({ sx, cssVars, children, slotProps, layoutQuery = '
             Need help?
           </Link>
 
-          {/** @slot Settings button */}
-          <SettingsButton />
         </Box>
       ),
     };

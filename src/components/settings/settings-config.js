@@ -2,7 +2,7 @@ import { themeConfig } from 'src/theme/theme-config';
 
 // ----------------------------------------------------------------------
 
-export const SETTINGS_STORAGE_KEY = 'app-settings';
+export const SETTINGS_STORAGE_KEY = 'skytech-app-settings-v2';
 
 // ----------------------------------------------------------------------
 

@@ -40,8 +40,6 @@ const ICONS = {
 export const navData = [
   {
     subheader: 'Management',
-    items: [
-
-    ],
+    items: [{ title: 'Top Marquee', path: paths.dashboard.topMarquee, icon: ICONS.logs }],
   },
 ];

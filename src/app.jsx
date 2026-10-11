@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
 import { ProgressBar } from 'src/components/progress-bar';
-import { defaultSettings, SettingsDrawer, SettingsProvider } from 'src/components/settings';
+import { defaultSettings, SettingsProvider } from 'src/components/settings';
 import { Snackbar } from 'src/components/snackbar';
 import 'src/global.css';
 import { LocalizationProvider } from 'src/locales';
@@ -19,7 +19,6 @@ import { login, logout, setTenantDetail } from './store/reducers/authReducer';
 export default function App({ children }) {
   const dispatch = useDispatch();
   const tenantDetail = utils.getItemFromStorage('tenant');
-  defaultSettings.primaryColor = tenantDetail && tenantDetail.primaryColor;
   useEffect(() => {
     bindInitData();
     updateFavicon();
@@ -28,8 +27,15 @@ export default function App({ children }) {
   const bindInitData = async () => {
     const token = utils.getTokensFromStorage();
     dispatch(setTenantDetail(tenantDetail ? JSON.parse(tenantDetail) : {}));
-    let currentTokenUser = token && jwtDecode(token.session);
-    if (currentTokenUser) {
+    const tokenUser = token && jwtDecode(token.session);
+    if (tokenUser) {
+      const fullName = [tokenUser.firstName, tokenUser.lastName].filter(Boolean).join(' ');
+      const currentTokenUser = {
+        ...tokenUser,
+        teacherId: tokenUser.userId,
+        teacherName: fullName,
+        name: fullName || tokenUser.sub,
+      };
       dispatch(login({ teacher: currentTokenUser, token }));
       // const { data } = await apiService.getUserInitializeAsync();
       // if (data && data.user && data.user.isTenantActive) {
@@ -74,7 +80,6 @@ export default function App({ children }) {
               <MotionLazy>
                 <Snackbar />
                 <ProgressBar />
-                <SettingsDrawer defaultSettings={defaultSettings} />
                 {children}
               </MotionLazy>
             </ThemeProvider>

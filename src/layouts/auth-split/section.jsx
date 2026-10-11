@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { CONFIG } from 'src/global-config';
 
-import bgicon from '../../assets/icons/bgicon.png';
 // ----------------------------------------------------------------------
 
 export function AuthSplitSection({
@@ -67,7 +66,6 @@ export function AuthSplitSection({
         )}
       </div>
 
-      <Box component="img" alt="Dashboard illustration" src={bgicon} />
 
       {!!methods?.length && method && (
         <Box component="ul" sx={{ gap: 2, display: 'flex' }}>

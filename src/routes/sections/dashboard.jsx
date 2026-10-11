@@ -9,6 +9,7 @@ const IndexPage = lazy(() => import('src/pages'));
 const ClassListPage = lazy(() => import('src/pages/class/list'));
 
 const TeacherListPage = lazy(() => import('src/pages/teacher/list'));
+const TopMarqueePage = lazy(() => import('src/pages/top-marquee/list'));
 const TeacherCreatePage = lazy(() => import('src/pages/teacher/new'));
 const TeacherEditPage = lazy(() => import('src/pages/teacher/edit'));
 const ProfileEditPage = lazy(() => import('src/pages/teacher/profile'));
@@ -58,6 +59,10 @@ export const dashboardRoutes = [
       {
         path: 'analytics',
         children: [{ index: true, element: <AnalyticsPage /> }],
+      },
+      {
+        path: 'top-marquee',
+        children: [{ index: true, element: <TopMarqueePage /> }],
       },
       {
         path: 'class',
