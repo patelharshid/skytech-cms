@@ -8,6 +8,7 @@ const IndexPage = lazy(() => import('src/pages'));
 const TopMarqueePage = lazy(() => import('src/pages/top-marquee/list'));
 const CategoryPage = lazy(() => import('src/pages/category/list'));
 const ProductPage = lazy(() => import('src/pages/product/list'));
+const InquiryPage = lazy(() => import('src/pages/inquiry/list'));
 
 const dashboardLayout = () => (
   <DashboardLayout>
@@ -44,6 +45,10 @@ export const dashboardRoutes = [
       {
         path: 'product',
         children: [{ index: true, element: <ProductPage /> }],
+      },
+      {
+        path: 'inquiry',
+        children: [{ index: true, element: <InquiryPage /> }],
       },
     ],
   },

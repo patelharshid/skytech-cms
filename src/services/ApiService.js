@@ -240,6 +240,58 @@ export default {
   updateProductStockAsync,
   updateProductStatusAsync,
   deleteProductAsync,
+
+  // Inquiries
+  getInquiryListAsync,
+  getInquiryByIdAsync,
+  createInquiryAsync,
+  updateInquiryStatusAsync,
+  deleteInquiryAsync,
 };
+
+// Inquiries
+async function getInquiryListAsync(params) {
+  const config = {
+    method: 'get',
+    url: '/api/inquiry',
+    params,
+  };
+  return await axios(config);
+}
+
+async function getInquiryByIdAsync(id) {
+  const config = {
+    method: 'get',
+    url: `/api/inquiry/${id}`,
+  };
+  return await axios(config);
+}
+
+async function createInquiryAsync(payload) {
+  const config = {
+    method: 'post',
+    url: '/api/inquiry',
+    data: payload,
+  };
+  return await axios(config);
+}
+
+async function updateInquiryStatusAsync(id, status) {
+  const config = {
+    method: 'patch',
+    url: `/api/inquiry/${id}/status`,
+    params: { status },
+  };
+  return await axios(config);
+}
+
+async function deleteInquiryAsync(id) {
+  const config = {
+    method: 'delete',
+    url: `/api/inquiry/${id}`,
+  };
+  return await axios(config);
+}
+
 
 

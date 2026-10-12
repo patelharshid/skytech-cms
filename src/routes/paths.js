@@ -28,6 +28,7 @@ export const paths = {
     topMarquee: `${ROOTS.DASHBOARD}/top-marquee`,
     category: `${ROOTS.DASHBOARD}/category`,
     product: `${ROOTS.DASHBOARD}/product`,
+    inquiry: `${ROOTS.DASHBOARD}/inquiry`,
     class: {
       root: `${ROOTS.DASHBOARD}/class`,
       list: `${ROOTS.DASHBOARD}/class/list`,
