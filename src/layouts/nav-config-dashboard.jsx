@@ -43,6 +43,7 @@ export const navData = [
         items: [
             { title: 'Top Marquee', path: paths.dashboard.topMarquee, icon: ICONS.logs },
             { title: 'Categories', path: paths.dashboard.category, icon: ICONS.category },
+            { title: 'Products', path: paths.dashboard.product, icon: ICONS.product },
         ],
     },
 ];

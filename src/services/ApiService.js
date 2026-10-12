@@ -97,6 +97,120 @@ async function deleteCategoryAsync(id) {
   return await axios(config);
 }
 
+// Brands
+async function getBrandListAsync(params) {
+  const config = {
+    method: 'get',
+    url: '/api/brand',
+    params,
+  };
+  return await axios(config);
+}
+
+async function getBrandByIdAsync(id) {
+  const config = {
+    method: 'get',
+    url: `/api/brand/${id}`,
+  };
+  return await axios(config);
+}
+
+async function saveBrandAsync(payload) {
+  const config = {
+    method: 'post',
+    url: '/api/brand',
+    data: payload,
+  };
+  return await axios(config);
+}
+
+async function updateBrandAsync(id, payload) {
+  const config = {
+    method: 'put',
+    url: `/api/brand/${id}`,
+    data: payload,
+  };
+  return await axios(config);
+}
+
+async function deleteBrandAsync(id) {
+  const config = {
+    method: 'delete',
+    url: `/api/brand/${id}`,
+  };
+  return await axios(config);
+}
+
+// Products
+async function getProductListAsync(params) {
+  const config = {
+    method: 'get',
+    url: '/api/product',
+    params,
+  };
+  return await axios(config);
+}
+
+async function getProductByIdAsync(id) {
+  const config = {
+    method: 'get',
+    url: `/api/product/${id}`,
+  };
+  return await axios(config);
+}
+
+async function getProductBySkuAsync(sku) {
+  const config = {
+    method: 'get',
+    url: `/api/product/sku/${sku}`,
+  };
+  return await axios(config);
+}
+
+async function saveProductAsync(payload) {
+  const config = {
+    method: 'post',
+    url: '/api/product',
+    data: payload,
+  };
+  return await axios(config);
+}
+
+async function updateProductAsync(id, payload) {
+  const config = {
+    method: 'put',
+    url: `/api/product/${id}`,
+    data: payload,
+  };
+  return await axios(config);
+}
+
+async function updateProductStockAsync(id, payload) {
+  const config = {
+    method: 'patch',
+    url: `/api/product/${id}/stock`,
+    data: payload,
+  };
+  return await axios(config);
+}
+
+async function updateProductStatusAsync(id, status) {
+  const config = {
+    method: 'patch',
+    url: `/api/product/${id}/status`,
+    params: { status },
+  };
+  return await axios(config);
+}
+
+async function deleteProductAsync(id) {
+  const config = {
+    method: 'delete',
+    url: `/api/product/${id}`,
+  };
+  return await axios(config);
+}
+
 export default {
   loginAsync,
   renewSessionAsync,
@@ -111,5 +225,21 @@ export default {
   saveCategoryAsync,
   updateCategoryAsync,
   deleteCategoryAsync,
+
+  getBrandListAsync,
+  getBrandByIdAsync,
+  saveBrandAsync,
+  updateBrandAsync,
+  deleteBrandAsync,
+
+  getProductListAsync,
+  getProductByIdAsync,
+  getProductBySkuAsync,
+  saveProductAsync,
+  updateProductAsync,
+  updateProductStockAsync,
+  updateProductStatusAsync,
+  deleteProductAsync,
 };
+
 
