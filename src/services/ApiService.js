@@ -54,6 +54,48 @@ async function deleteTopMarqueeAsync(id, payload) {
   return await axios(config);
 }
 
+// Categories
+async function getCategoryListAsync() {
+  const config = {
+    method: 'get',
+    url: '/api/category',
+  };
+  return await axios(config);
+}
+
+async function getCategoryByIdAsync(id) {
+  const config = {
+    method: 'get',
+    url: `/api/category/${id}`,
+  };
+  return await axios(config);
+}
+
+async function saveCategoryAsync(payload) {
+  const config = {
+    method: 'post',
+    url: '/api/category',
+    data: payload,
+  };
+  return await axios(config);
+}
+
+async function updateCategoryAsync(id, payload) {
+  const config = {
+    method: 'put',
+    url: `/api/category/${id}`,
+    data: payload,
+  };
+  return await axios(config);
+}
+
+async function deleteCategoryAsync(id) {
+  const config = {
+    method: 'delete',
+    url: `/api/category/${id}`,
+  };
+  return await axios(config);
+}
 
 export default {
   loginAsync,
@@ -63,4 +105,11 @@ export default {
   saveTopMarqueeAsync,
   updateTopMarqueeAsync,
   deleteTopMarqueeAsync,
+
+  getCategoryListAsync,
+  getCategoryByIdAsync,
+  saveCategoryAsync,
+  updateCategoryAsync,
+  deleteCategoryAsync,
 };
+

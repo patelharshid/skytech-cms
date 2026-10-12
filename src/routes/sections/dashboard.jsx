@@ -6,6 +6,7 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 
 const IndexPage = lazy(() => import('src/pages'));
 const TopMarqueePage = lazy(() => import('src/pages/top-marquee/list'));
+const CategoryPage = lazy(() => import('src/pages/category/list'));
 
 const dashboardLayout = () => (
   <DashboardLayout>
@@ -34,6 +35,10 @@ export const dashboardRoutes = [
       {
         path: 'top-marquee',
         children: [{ index: true, element: <TopMarqueePage /> }],
+      },
+      {
+        path: 'category',
+        children: [{ index: true, element: <CategoryPage /> }],
       },
     ],
   },
